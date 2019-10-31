@@ -59,7 +59,7 @@
 - basic
   - M和P绑定后从P的runq（local rq）中取G，切换到G的栈，执行
   - P的runq空了以后从global runq取G
-  - global runq空了，去偷别人家的P，拿一半
+  - global runq空了，去偷别人家的G，拿一半
   - 偷也偷不到了，M就idle（空闲）了
   - global rq需要加锁，local rq不需要
 

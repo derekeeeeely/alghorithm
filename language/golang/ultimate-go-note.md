@@ -359,3 +359,77 @@
   // if there is a concrete type value is stored in a error type interface
   // err != nil :是否有一个具体类型的值存在error类型的接口中
   ```
+
+- mutex | atomic | rwMutex
+
+  ```golang
+  mutex sync.Mutex
+  rwMutex sync.RWMutex
+  for i:= 0; i < 10; i++ {
+    mutex.lock()
+    {
+      // do sth
+    }
+    mutex.unlock()
+  }
+
+  atomic.AddInt64()
+  ```
+
+- channel
+  - 创建、关闭、读写、种类
+
+    ```golang
+    ch := make(chan int) // 无buffer类型，发送和接收会发生阻塞
+    ch2 := make(chan int, 4) // 有buffer类型，缓存满时发送会阻塞，缓存清空时接收会阻塞
+    go func() {
+      ch <- 2 // 写
+    }()
+    fmt.Println(<-ch) // 读
+    close(ch) // 重复关闭会panic，向已经关闭的send会panic，已经关闭还是可以读，读完已有数据以后读出的是默认值
+
+    s, ok := <- ch // s:0, ok: false表示已关闭
+    fmt.Println(s, ok)
+    for i := range ch {
+      fmt.Println(i)
+    }
+    ```
+  - 超时控制 | goroutine
+    ```golang
+    // goroutine
+    ch := make(chan int)
+    go func() {
+      ch <- 1
+    }()
+    <-ch
+
+    // 超时,case后是一个send或者receive，哪个先完成则执行对应case
+    select {
+      case <- ch:
+        // get data from ch
+      case <- time.After(2 * time.Second) // 可以换成任意的异常控制流
+        // read data from ch timeout
+    }
+
+    // range，这里的s是ch里的值，读完后是默认值，除非close，不然会一直for循环
+    for s := range ch {
+      fmt.Println(s)
+    }
+    ```
+  - 个人理解
+    ```golang
+    c := make(chan int)
+    go func() {
+      println("start G1")
+      c <- 1
+      println("end G1")
+    }()
+    println("outside start")
+    println(<-c)
+    println("outside end")
+    // outside start -> start G1 -> end G1 -> 1 -> outside end
+    // G1 new M1 绑定 P，执行G1，send阻塞，G1阻塞，M继续执行剩下的G（没了，所以MP解绑，M SLEEP），send完以后G1变成runable
+    // G1被新的M+P捕获，继续执行，输出end G1
+    // receiver阻塞解除，继续执行，输出1和outside end
+    // 问题是receiver是怎么阻塞的，有另一个线程负责receiver吗
+    ```
