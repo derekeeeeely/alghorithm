@@ -88,6 +88,19 @@ class LinkList {
     this.tail = this.head;
     this.head = prevNode; // prevNode refer to origin tail
   }
+  deleteHead() {
+    if (!this.head) {
+      return null
+    }
+    const delHead = this.head;
+    if (this.head.next) {
+      this.head = this.head.next;
+    } else {
+      this.head = null;
+      this.tail = null;
+    }
+    return delHead;
+  }
 }
 
 module.exports = { Node, LinkList }
