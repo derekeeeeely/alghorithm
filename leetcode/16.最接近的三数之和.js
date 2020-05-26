@@ -14,10 +14,16 @@ var threeSumClosest = function(nums, target) {
   const snums = nums.sort((a, b) => a - b)
   for (let i = 0; i < snums.length; i++) {
     const item = snums[i];
-    let start = 0;
+    let start = i + 1;
     let end = snums.length - 1;
+    let ll = Math.pow(2, 31) - 1;
     while (start < end) {
-
+      const ab = Math.abs(snums[start] + snums[end] + item - target)
+      if (ab < ll) {
+        ll = ab
+        start++
+        end--
+      }
     }
   }
 };
