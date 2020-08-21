@@ -88,3 +88,7 @@ const url2obj = (url) => {
 [].concat.apply([], [1,[2,3],[4,5],[6],7,8])
 // 去重
 [...new Set([1,2,3])]
+
+// react
+// 如何减少子组件渲染次数
+react.memo();
